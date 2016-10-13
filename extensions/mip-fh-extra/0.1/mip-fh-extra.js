@@ -12,18 +12,45 @@ define('mip-fh-extra', ['require', 'customElement', 'zepto'], function (require)
     var $ = require('zepto');
 
     var customElem = require('customElement').create();
+    // 加载js文件
+    var loadJSFile = function (url, callback) {
+
+        // Adding the script tag to the head as suggested before
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+
+        // Then bind the event to the callback function.
+        // There are several events for cross browser compatibility.
+        script.onreadystatechange = callback;
+        script.onload = callback;
+
+        // Fire the loading
+        head.appendChild(script);
+    };
+
     // 初始化UC加载广告判断
     var ucInit = function (ele) {
-        var navigator = window.navigator;
-        var uaStr = navigator.userAgent.toLowerCase();
-        var isUc = uaStr.indexOf('ucbrowser') > -1;
+        var platform = require('components/platform');
         var $ele = $(ele);
         var script = '';
 
         // 加载第三方广告代码
-        if (isUc) {
-            script = ['<script src="http://new.yokaunion.com/s.php?id=1039"><\/script>', '</script>'];
-            document.writeln(script.join(''));
+        if (platform.isUc()) {
+            // 缓存document.write
+            var docw = document.write;
+
+            // 重写document.write方法
+            document.write = function (node) {
+                $ele.append(node);
+            };
+            loadJSFile('http://new.yokaunion.com/s.php?id=1039', function () {
+                // 还原document.write
+                setTimeout(function () {
+                    document.write = docw;
+                }, 100);
+            });
         }
         // 加载百度网盟代码
         else {
