@@ -37,10 +37,7 @@ define('mip-fh-ad', ['require', 'customElement', 'zepto'], function (require) {
     };
     // load btm baidu ad
     var loadBdAd = function () {
-        window.cpro_psid = 'u2355234';
-        window.cpro_psdata = {
-            staticDomain: 'su.bdimg.com'
-        };
+        window.cpro_psid = 'u2815901';
         loadJSFile('https://su.bdimg.com/static/dspui/js/umf.js');
     };
 
